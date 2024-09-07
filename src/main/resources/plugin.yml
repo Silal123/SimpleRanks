@@ -1,0 +1,46 @@
+name: SimpleRanks
+version: '${project.version}'
+main: simpleranks.Simpleranks
+api-version: '1.20'
+website: https://hangar.papermc.io/Silal/SimpleRanks
+authors: [Silal]
+
+commands:
+  simpleranks:
+    description: This command is used to manage your configuration of simpleranks
+    aliases:
+      - sr
+  srank:
+    description: This command is used to update a players rank
+    aliases:
+      - rank
+
+permissions:
+  simpleranks.config:
+    default: op
+  simpleranks.playerrank.get:
+    default: op
+  simpleranks.playerrank.set:
+    default: op
+  simpleranks.playerrank.set.all:
+    default: op
+  simpleranks.rank.create:
+    default: op
+  simpleranks.rank.delete:
+    default: op
+  simpleranks.rank.list:
+    default: op
+  simpleranks.rank.modify:
+    default: op
+  simpleranks.rank.info:
+    default: op
+  simpleranks.group.list:
+    default: op
+  simpleranks.group.create:
+    default: op
+  simpleranks.group.delete:
+    default: op
+  simpleranks.group.modify:
+    default: op
+  simpleranks.group.info:
+    default: op

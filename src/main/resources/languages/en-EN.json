@@ -1,0 +1,89 @@
+{
+  "command": {
+    "no_rights_to_use": "You are §cnot allowed§7 to execute this command!",
+    "specified_player_not_exists": "The player you specified §cdoes not exist§7!",
+    "option_not_found": "The specified option was not found!",
+    "specified_option_not_found": "The Option §c{option}§7 was not found!",
+    "rank": {
+      "no_rights_update_rank": "You are §cnot allowed§7 to update the rank!",
+      "no_rights_get_rank": "You are §cnot allowed§7 to retrieve the rank!",
+      "no_rights_assign_higher_rank": "You are not allowed to assign a §chigher rank§7!",
+      "specified_rank_not_exists": "The rank you specified does §cnot exist§7!",
+      "rank_successful_assigned": "You gave the player §a{player}§7 the rank {rank_color}{rank_name}§7!",
+      "rank_of_player": "The player §a{player}§7 has the rank {rank_color}{rank_name}§7!"
+    },
+    "config": {
+      "default_rank_update_success": "You have §asuccessfully§7 set the rank {rank color}{rank name} as the default!",
+      "chat_format_update_success": "You have §asuccessfully§7 changed the chat format!",
+      "config_enter_true_or_false": "Please enter §atrue§7 or §cfalse§7 as value!",
+      "config_not_found": "The config value you specified was §cnot found§7!",
+      "chat_rank": {
+        "activated": "You have successfully §aactivated§7 the rank in the chat!",
+        "deactivated": "You have successfully §cdeactivated§7 the rank in the chat!"
+      },
+      "team_seperator": {
+        "max_symbols": "The seperator may be a §cmaximum of 4 symbols§7 long!",
+        "update_succes": "The separation is now §c{separator}§7!"
+      },
+      "team_rank": {
+        "activated": "You have successfully §aactivated§7 the team rank!",
+        "deactivated": "You have successfully §cdeactivated§7 the team rank!"
+      }
+    },
+    "rank_config": {
+      "no_permission": "You are §cnot allowed§7 to execute this subcommand!",
+      "option_not_found": "The rank option you specified does §xnot exist§7!",
+      "list": {
+        "all_ranks": "§a§lAll Ranks:"
+      },
+      "create": {
+        "maximum_ranks": "The server has reached the §cmaximum§7 number of ranks!",
+        "number_and_dpname": "Please enter a §cname and a color§7! Usage: §a/sr rank create <displayName> <color>",
+        "name_to_long": "The specified name is too long! Please use a §cmaximum of 30§7 characters!",
+        "color_single_letter": "The color must be a §csingle letter§7!",
+        "color_not_exists": "The specified color does §cnot exist§7!",
+        "rank_already_exists": "A rank with the name §c{rank_name}§7 already exists!",
+        "creation_sccess": "You have created the rank {rank_color}{rank_name}§7!"
+      },
+      "delete": {
+        "enter_name": "Please enter the §cname§7 of the rank you would like to delete!",
+        "rank_not_exist": "There is §cno rank§7 with the specified name!",
+        "can_not_change_default_rank": "You cannot §cdelete the default rank§7! Change it in the configs!",
+        "delete_success": "You have successfully deleted the rank §c{rank_name}§7!"
+      },
+      "modify": {
+        "enter_name": "Please §center a rank§7 you would like to modify!",
+        "rank_not_exist": "There is §cno rank§7 with the specified name!",
+        "no_modify_option": "Please specify an §coption§7 you would like to modify!",
+        "can_not_modify_default_rank": "You cannot §cmodify the default rank§7! Change it in the configs!",
+        "enter_value": "Please enter a §cvalue§7!",
+        "option_not_found": "The modify option §c{option}§7 was not found!",
+        "move": {
+          "already_bottom": "The rank is already at the §cbottom§7!",
+          "already_top": "The rank is already at the §ctop§7!",
+          "non": "none",
+          "sucess_down": "You moved the rank {rank_name}{rank_color}§7 down to the position §a{position}§7!",
+          "sucess_top": "You moved the rank {rank_name}{rank_color}§7 up to the position §a{position}§7!"
+        },
+        "displayName": {
+          "name_to_long": "The specified name is too long! Please use a §cmaximum of 30§7 characters!",
+          "rank_already_exists": "A rank with the name §c{rank_name}§7 already exists!",
+          "success": "You changed the name of the rank §c{old_rank_name}§7 to §a{rank_name}§7!"
+        },
+        "color": {
+          "color_single_letter":"The color must be a §csingle letter§7!",
+          "color_not_exists":"The specified color does §cnot exist§7!",
+          "success": "You changed the rank color from {old_color}color§7 to {new_color}color§7!"
+        }
+      },
+      "info": {
+        "enter_name": "Please §center a rank§7 from which you would like to access the information!",
+        "information_title": "§a§lInformations of the rank \"{rank_name}\":",
+        "name": "DisplayName",
+        "id": "Id",
+        "color": "Color",
+        "position": "Position"
+      }
+    }
+  }
+}
