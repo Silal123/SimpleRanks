@@ -51,7 +51,7 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
             if ("teamRankPlayerNameColor".startsWith(strings[1])) complete.add("teamRankPlayerNameColor");
             if ("joinMessageFormat".startsWith(strings[1])) complete.add("joinMessageFormat");
             if ("quitMessageFormat".startsWith(strings[1])) complete.add("quitMessageFormat");
-            if ("joinMesssage".startsWith(strings[1])) complete.add("joinMesssage");
+            if ("joinMesssage".startsWith(strings[1])) complete.add("joinMessage");
             if ("quitMessage".startsWith(strings[1])) complete.add("quitMessage");
 
         }
