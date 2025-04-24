@@ -16,16 +16,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleRanksComandTabComplete implements TabCompleter {
+
+    public static boolean hasRankPerm(CommandSender c) {
+        return c.hasPermission(Permissions.SETUP_RANK_LIST.perm()) || c.hasPermission(Permissions.SETUP_RANK_INFO.perm()) || c.hasPermission(Permissions.SETUP_RANK_DELETE.perm()) ||
+                c.hasPermission(Permissions.SETUP_RANK_MODIFY.perm()) || c.hasPermission(Permissions.SETUP_RANK_CREATE.name());
+    }
+
+    public static boolean hasGroupPerm(CommandSender c) {
+        return c.hasPermission(Permissions.SETUP_GROUP_LIST.perm()) || c.hasPermission(Permissions.SETUP_GROUP_INFO.perm()) || c.hasPermission(Permissions.SETUP_GROUP_DELETE.perm()) ||
+                c.hasPermission(Permissions.SETUP_GROUP_MODIFY.perm()) || c.hasPermission(Permissions.SETUP_GROUP_CREATE.name());
+    }
+
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         List<String> complete = new ArrayList<>();
 
         if (strings.length == 1) {
+            if ("help".startsWith(strings[0])) complete.add("help");
             if ("info".startsWith(strings[0])) complete.add("info");
-            if (commandSender.hasPermission(Permissions.SETUP_RANK_LIST.perm()) || commandSender.hasPermission(Permissions.SETUP_RANK_INFO.perm()) || commandSender.hasPermission(Permissions.SETUP_RANK_DELETE.perm()) ||
-            commandSender.hasPermission(Permissions.SETUP_RANK_MODIFY.perm()) || commandSender.hasPermission(Permissions.SETUP_RANK_CREATE.name())) { if ("rank".startsWith(strings[0])) complete.add("rank"); }
-            if (commandSender.hasPermission(Permissions.SETUP_GROUP_LIST.perm()) || commandSender.hasPermission(Permissions.SETUP_GROUP_INFO.perm()) || commandSender.hasPermission(Permissions.SETUP_GROUP_DELETE.perm()) ||
-                    commandSender.hasPermission(Permissions.SETUP_GROUP_MODIFY.perm()) || commandSender.hasPermission(Permissions.SETUP_GROUP_CREATE.name())) { if ("group".startsWith(strings[0])) complete.add("group"); }
+            if (hasRankPerm(commandSender) || hasGroupPerm(commandSender)) { if ("gui".startsWith(strings[0])) complete.add("gui"); }
+            if (hasRankPerm(commandSender)) { if ("rank".startsWith(strings[0])) complete.add("rank"); }
+            if (hasGroupPerm(commandSender)) { if ("group".startsWith(strings[0])) complete.add("group"); }
             if (commandSender.hasPermission(Permissions.CONFIG.perm()) && "config".startsWith(strings[0])) complete.add("config");
         }
 
@@ -38,15 +49,28 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
             if ("teamRank".startsWith(strings[1])) complete.add("teamRank");
             if ("defaultGroup".startsWith(strings[1])) complete.add("defaultGroup");
             if ("teamRankPlayerNameColor".startsWith(strings[1])) complete.add("teamRankPlayerNameColor");
+            if ("joinMessageFormat".startsWith(strings[1])) complete.add("joinMessageFormat");
+            if ("quitMessageFormat".startsWith(strings[1])) complete.add("quitMessageFormat");
+            if ("joinMesssage".startsWith(strings[1])) complete.add("joinMesssage");
+            if ("quitMessage".startsWith(strings[1])) complete.add("quitMessage");
+
         }
 
-        if (strings.length == 3 && strings[0].equals("config") && (strings[1].equals("chatRank") || strings[1].equals("rankTimer") || strings[1].equals("teamRank"))) {
+        if (strings.length == 3 && strings[0].equals("config") && (strings[1].equals("chatRank") || strings[1].equals("rankTimer") || strings[1].equals("teamRank") || strings[1].equals("joinMessage") || strings[1].equals("quitMessage"))) {
             if ("true".startsWith(strings[2])) complete.add("true");
             if ("false".startsWith(strings[2])) complete.add("false");
         }
 
         if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("chatFormat")) {
             complete.add(DefaultConfiguration.chatRankFormat.defaultValue());
+        }
+
+        if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("joinMessageFormat")) {
+            complete.add(DefaultConfiguration.joinMessageFormat.defaultValue());
+        }
+
+        if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("quitMessageFormat")) {
+            complete.add(DefaultConfiguration.quitMessageFormat.defaultValue());
         }
 
         if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("teamRankPlayerNameColor")) {

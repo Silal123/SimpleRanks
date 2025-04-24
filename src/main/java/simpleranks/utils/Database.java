@@ -26,11 +26,11 @@ public class Database {
 
         try {
             databaseConnection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword);
-        } catch (Exception e) { System.err.println("[DATENBANK] fehler bei der Verbindung mit der Datenbank!"); }
+        } catch (Exception e) { System.err.println("[DATABASE] Error while connecting to Database!"); }
 
         try {
             database = databaseConnection.createStatement();
-        } catch (Exception e) { System.err.println("[DATENBANK] fehler beim erstellen des Statement!"); }
+        } catch (Exception e) { System.err.println("[DATABASE] Error while connecting to Database (Statement)!"); }
 
         try {
             database.executeUpdate("CREATE TABLE IF NOT EXISTS \"simpleranks_ranks\" (\n" +
@@ -56,14 +56,14 @@ public class Database {
                     "\t\"rank\"\tTEXT,\n" +
                     "\t\"timer\"\tTEXT DEFAULT -1\n" +
                     ");");
-        } catch (Exception e) { System.err.println("[DATENBANK] fehler beim erstellen der Tabellen!"); e.printStackTrace(); }
+        } catch (Exception e) { System.err.println("[DATABASE] Error creating tables!"); e.printStackTrace(); }
     }
 
     private static void initFiles() {
         File database = new File(databasePath);
         try {
             if (!database.exists()) { database.createNewFile(); }
-        } catch (Exception e) { System.err.println("[DATABASE] fehler beim Erstellen des Datenbank files '" + databasePath + "'!"); }
+        } catch (Exception e) { System.err.println("[DATABASE] Error creating database file '" + databasePath + "'!"); }
     }
 
     public static void shutdown() {

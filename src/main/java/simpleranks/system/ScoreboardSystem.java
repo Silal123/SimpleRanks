@@ -1,17 +1,16 @@
 package simpleranks.system;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import simpleranks.Simpleranks;
 import simpleranks.utils.PlayerRank;
 import simpleranks.utils.config.DefaultConfiguration;
 import simpleranks.utils.config.PlayerConfiguration;
@@ -84,7 +83,15 @@ public class ScoreboardSystem {
         PlayerRank rank = conf.getRank();
 
         String format = DefaultConfiguration.chatRankFormat.get().replace("&", "§");
-        String message = format.replace("{rank_color}", rank.color()).replace("{rank_dpname}", rank.displayName()).replace("{player_name}", e.getPlayer().getName()).replace("{message}", e.getMessage());
+        String message = format.replace("%rank_color%", rank.color())
+                .replace("%rank_dpname%", rank.displayName())
+                .replace("%player_name%", "%1$s")
+                .replace("%message%", "%2$s");
+
+        if (Simpleranks.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            message = PlaceholderAPI.setPlaceholders(e.getPlayer(), message);
+        }
+
         e.setFormat(message);
     }
 

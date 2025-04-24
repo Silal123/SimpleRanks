@@ -10,6 +10,8 @@ import java.util.Random;
 
 public class PlayerRank extends Database {
 
+    public static int NAME_CHAR_LIMIT = 100;
+
     private long id;
 
     public PlayerRank(long id) {
@@ -118,15 +120,20 @@ public class PlayerRank extends Database {
     }
 
     public String color() {
+        return "§" + colorCode();
+    }
+
+    public String colorCode() {
         if (!isRankExistent(id)) return null;
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksDataTable + " WHERE id = '" + id + "';");
             String s = null; if (rs.next()) { s = rs.getString("color"); }
             rs.close();
-            return "§" + s;
+            return s;
         } catch (Exception e) { e.printStackTrace(); }
         return null;
     }
+
     public PlayerRank setColor(String color) {
         try {
             database.executeUpdate("UPDATE " + ranksDataTable + " SET color = '" + color + "' WHERE id = '" + id + "';");

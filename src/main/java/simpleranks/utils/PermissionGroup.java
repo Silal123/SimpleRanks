@@ -11,6 +11,8 @@ import java.util.Random;
 
 public class PermissionGroup extends Database {
 
+    public static int NAME_CHAR_LIMIT = 50;
+
     private long id;
 
     public PermissionGroup(long id) {
@@ -96,9 +98,23 @@ public class PermissionGroup extends Database {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    public List<PlayerRank> getRanks() {
+        return PlayerRank.ranks().stream().filter(rank -> rank.group().id() == this.id).toList();
+    }
+
     public static boolean isGroupExistent(long id) {
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksPermissionGroupTable + " WHERE id = '" + id + "';");
+            boolean b = rs.next();
+            rs.close();
+            return b;
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
+
+    public static boolean isGroupExistent(String dpN) {
+        try {
+            ResultSet rs = database.executeQuery("SELECT * FROM " + ranksPermissionGroupTable + " WHERE name = '" + dpN + "';");
             boolean b = rs.next();
             rs.close();
             return b;
