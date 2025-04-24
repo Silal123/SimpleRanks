@@ -46,6 +46,7 @@ public final class Simpleranks extends JavaPlugin {
         getLogger().info("Loaded all ranks: " + PlayerRank.rankNames());
         getLogger().info("Loaded all groups: " + PermissionGroup.groupNames());
 
+        getLogger().info("Starting update check...");
         checkForUpdates();
 
         getLogger().info("Loading Metrics...");
