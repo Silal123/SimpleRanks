@@ -6,7 +6,7 @@
 
     <groupId>simpleranks</groupId>
     <artifactId>simpleranks</artifactId>
-    <version>1.3-RELEASE</version>
+    <version>1.3</version>
     <packaging>jar</packaging>
 
     <name>simpleranks</name>
