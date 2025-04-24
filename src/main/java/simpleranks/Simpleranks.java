@@ -1,5 +1,6 @@
 package simpleranks;
 
+import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,7 +15,11 @@ import simpleranks.system.placeholderapi.SimpleRanksPlaceholder;
 import simpleranks.utils.*;
 import simpleranks.utils.config.DefaultConfiguration;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public final class Simpleranks extends JavaPlugin {
 
@@ -40,6 +45,8 @@ public final class Simpleranks extends JavaPlugin {
 
         getLogger().info("Loaded all ranks: " + PlayerRank.rankNames());
         getLogger().info("Loaded all groups: " + PermissionGroup.groupNames());
+
+        checkForUpdates();
 
         getLogger().info("Loading Metrics...");
         this.metrics = new Metrics(this, 25609);
@@ -98,6 +105,38 @@ public final class Simpleranks extends JavaPlugin {
         if (!new File(data).exists()) {
             new File(data).mkdir();
         }
+    }
+
+    public void checkForUpdates() {
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                String apiUrl = "https://api.github.com/repos/Silal123/SimpleRanks/releases/latest";
+                HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
+                connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder json = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    json.append(line);
+                }
+
+                JsonManager release = new JsonManager(json.toString());
+                String latestVersion = release.getString("tag_name").replace("v", "");
+
+                String currentVersion = getDescription().getVersion();
+
+                if (!currentVersion.equalsIgnoreCase(latestVersion)) {
+                    getLogger().warning("There is a new version available: " + latestVersion);
+                    getLogger().warning("You are using: " + currentVersion);
+                } else {
+                    getLogger().info("Your plugin is up to date!");
+                }
+
+            } catch (Exception e) {
+                getLogger().warning("Error while checking for updates: " + e.getMessage());
+            }
+        });
     }
 
 }
