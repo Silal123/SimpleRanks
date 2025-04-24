@@ -80,8 +80,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setCustomHead(CustomHead customHead) {
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+    /*public ItemBuilder setCustomHead(CustomHead customHead) {
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "CustomHead");
         profile.getProperties().put("textures", new Property("textures", customHead.texture()));
         Field profileField = null;
 
@@ -103,7 +103,7 @@ public class ItemBuilder {
             e.printStackTrace();
         }
         return this;
-    }
+    }*/
 
     public ItemBuilder setLeatherArmorColor(Color c) {
         LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;

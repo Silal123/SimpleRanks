@@ -11,6 +11,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import simpleranks.Simpleranks;
+import simpleranks.utils.JavaTools;
 import simpleranks.utils.PlayerRank;
 import simpleranks.utils.config.DefaultConfiguration;
 import simpleranks.utils.config.PlayerConfiguration;
@@ -45,7 +46,18 @@ public class ScoreboardSystem {
 
         for (PlayerRank this_rank : PlayerRank.ranks()) {
             Team t = scoreboard.registerNewTeam(this_rank.teamName());
-            t.setPrefix(this_rank.color() + this_rank.displayName() + "§8 " + DefaultConfiguration.teamRankSeparator.get() + " §7");
+
+            try {
+                t.setPrefix(this_rank.color() + this_rank.displayName() + "§8 " + DefaultConfiguration.teamRankSeparator.get() + " §7");
+            } catch (IllegalArgumentException e) {
+                Bukkit.getLogger().warning("One of your ranks is to long " + this_rank.displayName() + " to get displayed in the tab bar. Please shorten it!");
+                try {
+                    t.setPrefix(this_rank.color() + JavaTools.shortenWithDots(this_rank.displayName(), 30) + "§8 " + DefaultConfiguration.teamRankSeparator.get() + " §7");
+                } catch (IllegalArgumentException ex) {
+                    t.setPrefix(this_rank.color() + JavaTools.shortenWithDots(this_rank.displayName(), 10) + "§8 " + DefaultConfiguration.teamRankSeparator.get() + " §7");
+                    Bukkit.getLogger().warning("The rank is still to long it will be shortened further!");
+                }
+            }
 
             if (!PlayerRank.colors().contains(DefaultConfiguration.teamRankPlayerNameColor.get())) t.setColor(ChatColor.getByChar('7'));
             else t.setColor(ChatColor.getByChar(DefaultConfiguration.teamRankPlayerNameColor.get()));

@@ -87,13 +87,11 @@ public class RankManagerGui extends Gui {
             itemIndexes.put(i, group);
         }
 
-        ItemStack prev = new ItemBuilder(Material.PLAYER_HEAD, 1)
-                .setCustomHead(ItemBuilder.CustomHead.OAK_ARROW_LEFT)
+        ItemStack prev = new ItemBuilder(Material.ARROW, 1)
                 .setDisplayName("§cPrevious page")
                 .build();
 
-        ItemStack next = new ItemBuilder(Material.PLAYER_HEAD, 1)
-                .setCustomHead(ItemBuilder.CustomHead.OAK_ARROW_RIGHT)
+        ItemStack next = new ItemBuilder(Material.SPECTRAL_ARROW, 1)
                 .setDisplayName("§aNext page")
                 .build();
 
@@ -190,13 +188,11 @@ public class RankManagerGui extends Gui {
             itemIndexes.put(i, rank);
         }
 
-        ItemStack prev = new ItemBuilder(Material.PLAYER_HEAD, 1)
-                .setCustomHead(ItemBuilder.CustomHead.OAK_ARROW_LEFT)
+        ItemStack prev = new ItemBuilder(Material.ARROW, 1)
                 .setDisplayName("§cPrevious page")
                 .build();
 
-        ItemStack next = new ItemBuilder(Material.PLAYER_HEAD, 1)
-                .setCustomHead(ItemBuilder.CustomHead.OAK_ARROW_RIGHT)
+        ItemStack next = new ItemBuilder(Material.SPECTRAL_ARROW, 1)
                 .setDisplayName("§aNext page")
                 .build();
 

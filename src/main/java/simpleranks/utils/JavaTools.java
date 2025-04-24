@@ -1,6 +1,42 @@
 package simpleranks.utils;
 
+import org.bukkit.Bukkit;
+
 public class JavaTools {
+
+    public static boolean isLower(String compareVersion, String serverVersion) {
+        String[] compareParts = compareVersion.split("\\.");
+        String[] serverParts = serverVersion.split("\\.");
+
+        int length = Math.max(compareParts.length, serverParts.length);
+
+        for (int i = 0; i < length; i++) {
+            int comparePart = i < compareParts.length ? Integer.parseInt(compareParts[i]) : 0;
+            int serverPart = i < serverParts.length ? Integer.parseInt(serverParts[i]) : 0;
+
+            if (serverPart < comparePart) {
+                return true;
+            } else if (serverPart > comparePart) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    public static String shortenWithDots(String input, int maxLength) {
+        if (input.length() > maxLength) {
+            if (maxLength <= 3) return "...".substring(0, maxLength);
+            return input.substring(0, maxLength - 3) + "...";
+        } else {
+            return input;
+        }
+    }
+
+    public static String getMcVersion() {
+        String mcVersion = Bukkit.getVersion().split("\\(MC: ")[1].replace(")", "");
+        return mcVersion;
+    }
 
     public static boolean isLong(String s) {
         try {
