@@ -15,9 +15,9 @@ public class PermissionsManager {
     public static Map<UUID, PermissionAttachment> permissionAttachments = new HashMap<>();
 
     public static void addPermissionToPlayer(Player p, String permission) {
-        if (!permissionAttachments.containsKey(p.getUniqueId())) permissionAttachments.put(p.getUniqueId(), p.addAttachment(Simpleranks.instance));
-        PermissionAttachment attachment = permissionAttachments.get(p.getUniqueId());
+        PermissionAttachment attachment = permissionAttachments.computeIfAbsent(p.getUniqueId(), uuid -> p.addAttachment(Simpleranks.instance));
         attachment.setPermission(permission, true);
+        p.recalculatePermissions();
     }
 
     public static void removePermissionFromPlayer(Player p, String permission) {
@@ -26,18 +26,18 @@ public class PermissionsManager {
         attachment.unsetPermission(permission);
     }
 
-
     public static void removePlayerAttachment(Player p) {
         if (!permissionAttachments.containsKey(p.getUniqueId())) return;
         p.removeAttachment(permissionAttachments.get(p.getUniqueId()));
         permissionAttachments.remove(p.getUniqueId());
+        p.recalculatePermissions();
     }
 
     public static void removeAllPermissionsFromPlayer(Player p) {
         if (!permissionAttachments.containsKey(p.getUniqueId())) return;
-        for (Map.Entry<String, Boolean> entry : permissionAttachments.get(p.getUniqueId()).getPermissions().entrySet()) {
-            permissionAttachments.get(p.getUniqueId()).unsetPermission(entry.getKey());
-        }
+        PermissionAttachment attachment = permissionAttachments.get(p.getUniqueId());
+        new HashMap<>(attachment.getPermissions()).keySet().forEach(attachment::unsetPermission);
+        p.recalculatePermissions();
     }
 
     public static void removeAllPlayerAttachments() {
@@ -51,16 +51,19 @@ public class PermissionsManager {
 
             p.removeAttachment(entry.getValue());
             permissionAttachments.remove(p.getUniqueId());
+            p.recalculatePermissions();
         }
     }
 
     public static void addPermissionGroupPermissionsToPlayer(Player p) {
-        PermissionGroup group = PlayerConfiguration.getFor(p).getRank().group();
         removeAllPermissionsFromPlayer(p);
+        PermissionGroup group = PlayerConfiguration.getFor(p).getRank().group();
         for (String perm : group.permissions()) {
             addPermissionToPlayer(p, perm);
         }
+        p.recalculatePermissions();
     }
+
 
     public static void reload() {
         removeAllPlayerAttachments();
