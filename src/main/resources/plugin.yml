@@ -17,6 +17,10 @@ commands:
     description: This command is used to update a players rank
     aliases:
       - rank
+  srbroadcast:
+    description: Broadcast a message to players with a specific rank
+    aliases:
+      - broadcast
 
 permissions:
   simpleranks.config:

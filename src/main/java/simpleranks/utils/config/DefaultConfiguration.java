@@ -17,15 +17,15 @@ public class DefaultConfiguration {
 
     public static ConfigValue<String> defaultRank = new ConfigValue<>("defaultRank", String.class, configFile.toPath(), "Spieler");
 
-    public static ConfigValue<String> chatRankFormat = new ConfigValue<>("rank.chatFormat", String.class, configFile.toPath(), "%rank_color%%rank_dpname% &8»&7 %player_name%&8:&7 %message%");
+    public static ConfigValue<String> chatRankFormat = new ConfigValue<>("rank.chatFormat", String.class, configFile.toPath(), "%rank_color%%rank_dpname% &8»&f %player_name%&8:&7 %message%");
     public static ConfigValue<Boolean> chatRankEnabled = new ConfigValue<>("rank.chatRank", Boolean.class, configFile.toPath(), true);
 
     public static ConfigValue<String> teamRankSeparator = new ConfigValue<>("rank.teamSeparator", String.class, configFile.toPath(), "»");
     public static ConfigValue<Boolean> teamRankEnabled = new ConfigValue<>("rank.teamRank", Boolean.class, configFile.toPath(), true);
     public static ConfigValue<String> teamRankPlayerNameColor = new ConfigValue<>("rank.teamRankPlayerNameColor", String.class, configFile.toPath(), "7");
 
-    public static ConfigValue<String> joinMessageFormat = new ConfigValue<>("rank.joinMessageFormat", String.class, configFile.toPath(), "&a+ %rank_color%%rank_dpname% &8->&f %player_name%");
-    public static ConfigValue<String> quitMessageFormat = new ConfigValue<>("rank.quitMessageFormat", String.class, configFile.toPath(), "&c- %rank_color%%rank_dpname% &8->&f %player_name%");
+    public static ConfigValue<String> joinMessageFormat = new ConfigValue<>("rank.joinMessageFormat", String.class, configFile.toPath(), "&a+ %rank_color%%player_name%");
+    public static ConfigValue<String> quitMessageFormat = new ConfigValue<>("rank.quitMessageFormat", String.class, configFile.toPath(), "&c- %rank_color%%player_name%");
     public static ConfigValue<Boolean> joinMessageEnabled = new ConfigValue<>("rank.joinMessage", Boolean.class, configFile.toPath(), true);
     public static ConfigValue<Boolean> quitMessageEnabled = new ConfigValue<>("rank.quitMessage", Boolean.class, configFile.toPath(), true);
 
@@ -45,13 +45,13 @@ public class DefaultConfiguration {
                 defaultJson.addProperty("defaultGroup", "Default");
                 defaultJson.addProperty("rankTimer", true);
                 defaultJson.addProperty("rank", new JsonManager()
-                        .addProperty("chatFormat", "{rank_color}{rank_dpname} &8»&7 {player_name}&8:&7 {message}")
+                        .addProperty("chatFormat", chatRankFormat.defaultValue())
                         .addProperty("chatRank", true)
                         .addProperty("teamSeparator", "»")
                         .addProperty("teamRank", true)
                         .addProperty("teamRankPlayerNameColor", "7")
-                        .addProperty("joinMessageFormat", "&a+ {rank_color}{rank_dpname} &8->&f {player_name}")
-                        .addProperty("quitMessageFormat", "&c- {rank_color}{rank_dpname} &8->&f {player_name}")
+                        .addProperty("joinMessageFormat", joinMessageFormat.defaultValue())
+                        .addProperty("quitMessageFormat", quitMessageFormat.defaultValue())
                         .addProperty("joinMessage", true)
                         .addProperty("quitMessage", true)
                 );

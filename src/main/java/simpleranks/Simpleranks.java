@@ -5,8 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import simpleranks.commands.BroadcastCommand;
 import simpleranks.commands.RankCommand;
 import simpleranks.commands.SimpleRanksCommand;
+import simpleranks.commands.tabcomplete.BroadcastCommandTabComplete;
 import simpleranks.commands.tabcomplete.RankCommandTabComplete;
 import simpleranks.commands.tabcomplete.SimpleRanksComandTabComplete;
 import simpleranks.listeners.*;
@@ -88,8 +90,10 @@ public final class Simpleranks extends JavaPlugin {
     public void initCommands() {
         getCommand("simpleranks").setExecutor(new SimpleRanksCommand());
         getCommand("simpleranks").setTabCompleter(new SimpleRanksComandTabComplete());
-        getCommand("rank").setExecutor(new RankCommand());
-        getCommand("rank").setTabCompleter(new RankCommandTabComplete());
+        getCommand("srank").setExecutor(new RankCommand());
+        getCommand("srank").setTabCompleter(new RankCommandTabComplete());
+        getCommand("srbroadcast").setExecutor(new BroadcastCommand());
+        getCommand("srbroadcast").setTabCompleter(new BroadcastCommandTabComplete());
     }
 
     @Override
