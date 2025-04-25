@@ -3,15 +3,15 @@ package simpleranks.system.placeholderapi;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.utils.JavaTools;
 import simpleranks.utils.config.PlayerConfiguration;
 
 public class SimpleRanksPlaceholder extends PlaceholderExpansion {
 
-    private final Simpleranks plugin;
+    private final SimpleRanks plugin;
 
-    public SimpleRanksPlaceholder(Simpleranks plugin) {
+    public SimpleRanksPlaceholder(SimpleRanks plugin) {
         this.plugin = plugin;
     }
 

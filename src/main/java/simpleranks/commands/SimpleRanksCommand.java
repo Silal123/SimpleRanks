@@ -5,10 +5,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.commands.tabcomplete.SimpleRanksComandTabComplete;
 import simpleranks.system.ScoreboardSystem;
 import simpleranks.system.rankgui.manager.RankManagerGui;
@@ -78,18 +77,18 @@ public class SimpleRanksCommand implements CommandExecutor {
             String config_value = strings[2];
 
             if (config_key.equals("defaultRank")) {
-                if (!PlayerRank.isRankExistent(config_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank you specified does §cnot exist§7!"); return true; }
+                if (!Rank.isRankExistent(config_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank you specified does §cnot exist§7!"); return true; }
                 DefaultConfiguration.defaultRank.set(config_value);
-                PlayerRank rank = PlayerRank.get(config_value);
+                Rank rank = Rank.get(config_value);
 
-                PlayerRank.resortRanks();
+                Rank.resortRanks();
 
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You have §asuccessfully§7 set the rank " + rank.color() + rank.displayName() + " as the default!");
                 return true;
             }
 
             if (config_key.equals("defaultGroup")) {
-                if (!PermissionGroup.groupNames().contains(config_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The group you specified does §cnot exist§7!"); return true; }
+                if (!Group.groupNames().contains(config_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The group you specified does §cnot exist§7!"); return true; }
                 DefaultConfiguration.defaultRank.set(config_value);
 
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You have §asuccessfully§7 set the group §a" + config_value + " as the default!");
@@ -165,7 +164,7 @@ public class SimpleRanksCommand implements CommandExecutor {
 
             if (config_key.equals("teamSeparator")) {
                 String value_without_colorcodes = config_value;
-                for (String c : PlayerRank.colors()) { value_without_colorcodes = value_without_colorcodes.replace("&" + c, ""); }
+                for (String c : Rank.colors()) { value_without_colorcodes = value_without_colorcodes.replace("&" + c, ""); }
 
                 if (value_without_colorcodes.length() > 4) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The separator may be a §cmaximum of 4 symbols§7 long!"); return true; }
 
@@ -193,7 +192,7 @@ public class SimpleRanksCommand implements CommandExecutor {
             }
 
             if (config_key.equals("teamRankPlayerNameColor")) {
-                if (!PlayerRank.colors().contains(config_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please enter a §avalid§7 color!"); return true; }
+                if (!Rank.colors().contains(config_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please enter a §avalid§7 color!"); return true; }
                 DefaultConfiguration.teamRankPlayerNameColor.set(config_value);
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You updated the §aPlayer Name Color§7 to §" + config_value + "color§7!");
                 ScoreboardSystem.reloadAll();
@@ -225,32 +224,32 @@ public class SimpleRanksCommand implements CommandExecutor {
 
             if (option2.equals("list")) {
                 if (!commandSender.hasPermission(Permissions.SETUP_GROUP_LIST.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to execute this subcommand!"); return true; }
-                commandSender.sendMessage(Prefix.SYSTEM.def() + "List of all permission groups: §a" + PermissionGroup.groupNames() + "§7!");
+                commandSender.sendMessage(Prefix.SYSTEM.def() + "List of all permission groups: §a" + Group.groupNames() + "§7!");
                 return true;
             }
 
             if (option2.equals("create")) {
                 if (!commandSender.hasPermission(Permissions.SETUP_GROUP_CREATE.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to execute this subcommand!"); return true; }
-                if (PermissionGroup.groups().size() > 100) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The server has reached the §cmaximum§7 number of permission groups!"); }
+                if (Group.groups().size() > 100) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The server has reached the §cmaximum§7 number of permission groups!"); }
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please enter a §cname and a color§7! Usage: §a/sr group create <name> <permissions>"); return true; }
                 String name = strings[2];
 
-                if (name.length() > PermissionGroup.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PermissionGroup.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
-                if (PermissionGroup.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A group with the name §c" + name + "§7 already exists!"); return true; }
+                if (name.length() > Group.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Group.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
+                if (Group.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A group with the name §c" + name + "§7 already exists!"); return true; }
 
                 List<String> permissions = new ArrayList<>();
                 if (strings.length > 3) {
                     String permissionsString = strings[3];
                     String[] permissionsStringSplit = permissionsString.split(",");
                     for (String t_p : permissionsStringSplit) {
-                        Permission perm = Simpleranks.instance.getServer().getPluginManager().getPermission(t_p);
+                        Permission perm = SimpleRanks.getInstance().getServer().getPluginManager().getPermission(t_p);
                         if (perm == null) continue;
-                        if (!Simpleranks.instance.getServer().getPluginManager().getPermissions().contains(perm)) continue;
+                        if (!SimpleRanks.getInstance().getServer().getPluginManager().getPermissions().contains(perm)) continue;
                         permissions.add(t_p);
                     }
                 }
 
-                PermissionGroup.newGroup(name, permissions);
+                Group.newGroup(name, permissions);
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You have created the permission group §a" + name + "§7 with the permissions §a" + permissions + "§7!");
                 return true;
             }
@@ -260,10 +259,10 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please enter the §cname§7 of the rank you would like to delete!"); return true; }
                 String name = strings[2];
 
-                if (!PermissionGroup.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
+                if (!Group.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
                 if (DefaultConfiguration.defaultPermissionGroup.get().equals(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You cannot §cdelete the default group§7! Change it in the configs!"); return true; }
 
-                PermissionGroup.deleteGroup(PermissionGroup.get(name).id());
+                Group.deleteGroup(Group.get(name).id());
 
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You have successfully deleted the group §c" + name + "§7!");
                 return true;
@@ -273,8 +272,8 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (!commandSender.hasPermission(Permissions.SETUP_GROUP_INFO.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to execute this subcommand!"); return true; }
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please §center a group§7 from which you would like to access the information!"); return true; }
                 String name = strings[2];
-                if (!PermissionGroup.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
-                PermissionGroup group = PermissionGroup.get(name);
+                if (!Group.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
+                Group group = Group.get(name);
 
                 commandSender.sendMessage("");
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "§a§lInformations of the group \"" + group.name() + "\":");
@@ -290,12 +289,12 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please §center a grouü§7 you would like to modify!"); return true; }
                 String name = strings[2];
 
-                if (!PermissionGroup.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
+                if (!Group.groupNames().contains(name)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
                 if (strings.length < 4) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please specify an §coption§7 you would like to modify!"); return true; }
                 String option3_key = strings[3];
 
                 if (option3_key.equals("resetPermissions")) {
-                    PermissionGroup.get(name).setPermissions(new ArrayList<>());
+                    Group.get(name).setPermissions(new ArrayList<>());
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "The permissions of the group §a" + name + "§7 have been reset!");
                     PermissionsManager.reload();
                     return true;
@@ -305,15 +304,15 @@ public class SimpleRanksCommand implements CommandExecutor {
                 String option3_value = strings[4];
 
                 if (option3_key.equals("addPermission")) {
-                    Permission perm = Simpleranks.instance.getServer().getPluginManager().getPermission(option3_value);
+                    Permission perm = SimpleRanks.getInstance().getServer().getPluginManager().getPermission(option3_value);
                     if (perm == null) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified permission does not §cexist§7!"); return true; }
-                    if (!Simpleranks.instance.getServer().getPluginManager().getPermissions().contains(perm)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified permission does not §cexist§7!"); return true; }
+                    if (!SimpleRanks.getInstance().getServer().getPluginManager().getPermissions().contains(perm)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified permission does not §cexist§7!"); return true; }
 
-                    if (PermissionGroup.get(name).permissions().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The group already has the §cpermission§7!"); return true; }
+                    if (Group.get(name).permissions().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The group already has the §cpermission§7!"); return true; }
 
-                    List<String> perms = PermissionGroup.get(name).permissions();
+                    List<String> perms = Group.get(name).permissions();
                     perms.add(option3_value);
-                    PermissionGroup.get(name).setPermissions(perms);
+                    Group.get(name).setPermissions(perms);
 
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "You added the permission §a" + option3_value + "§7 to the group §a" + name + "§7!");
                     PermissionsManager.reload();
@@ -321,11 +320,11 @@ public class SimpleRanksCommand implements CommandExecutor {
                 }
 
                 if (option3_key.equals("removePermission")) {
-                    if (!PermissionGroup.get(name).permissions().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The group §a" + name + "§7 doesn`t have the Permission!"); return true; }
+                    if (!Group.get(name).permissions().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The group §a" + name + "§7 doesn`t have the Permission!"); return true; }
 
-                    List<String> perms = PermissionGroup.get(name).permissions();
+                    List<String> perms = Group.get(name).permissions();
                     perms.remove(option3_value);
-                    PermissionGroup.get(name).setPermissions(perms);
+                    Group.get(name).setPermissions(perms);
 
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "You removed the permission §a" + option3_value + "§7 from the group §a" + name + "§7!");
                     PermissionsManager.reload();
@@ -333,10 +332,10 @@ public class SimpleRanksCommand implements CommandExecutor {
                 }
 
                 if (option3_key.equals("setName")) {
-                    if (option3_value.length() > PermissionGroup.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PermissionGroup.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
-                    if (PermissionGroup.groupNames().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A group with the name §c" + option3_value + "§7 already exists!"); return true; }
+                    if (option3_value.length() > Group.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Group.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
+                    if (Group.groupNames().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A group with the name §c" + option3_value + "§7 already exists!"); return true; }
                     try {
-                        PermissionGroup.get(name).setName(option3_value);
+                        Group.get(name).setName(option3_value);
                         if (DefaultConfiguration.defaultPermissionGroup.get().equals(name)) DefaultConfiguration.defaultPermissionGroup.set(option3_value);
                     } catch (Exception e) { e.printStackTrace(); }
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "You changed the name of the group §c" + name + "§7 to §a" + option3_value + "§7!");
@@ -353,12 +352,12 @@ public class SimpleRanksCommand implements CommandExecutor {
 
             if (option2.equals("list")) {
                 if (!commandSender.hasPermission(Permissions.SETUP_RANK_LIST.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to execute this subcommand!"); return true; }
-                List<PlayerRank> ranks = new ArrayList<>(PlayerRank.ranks());
-                ranks.sort(Comparator.comparing(PlayerRank::position));
+                List<Rank> ranks = new ArrayList<>(Rank.ranks());
+                ranks.sort(Comparator.comparing(Rank::position));
 
                 commandSender.sendMessage("");
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "§a§lAll Ränge:§r");
-                for (PlayerRank rank : ranks) {
+                for (Rank rank : ranks) {
                     commandSender.sendMessage(Prefix.SYSTEM.def() + rank.position() + " - " + rank.color() + rank.displayName() + "§7");
                 }
                 commandSender.sendMessage("");
@@ -367,20 +366,20 @@ public class SimpleRanksCommand implements CommandExecutor {
 
             if (option2.equals("create")) {
                 if (!commandSender.hasPermission(Permissions.SETUP_RANK_CREATE.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to execute this subcommand!"); return true; }
-                if (PlayerRank.ranks().size() > 50) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The server has reached the §cmaximum§7 number of ranks!"); return true; }
+                if (Rank.ranks().size() > 50) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The server has reached the §cmaximum§7 number of ranks!"); return true; }
                 if (strings.length < 4) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please enter a §cname and a color§7! Usage: §a/sr rank create <displayName> <color>"); return true; }
                 String dpName = strings[2];
                 String color = strings[3];
 
-                if (dpName.length() > PlayerRank.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PlayerRank.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
+                if (dpName.length() > Rank.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Rank.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
                 if (color.length() > 1) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The color must be a §csingle letter§7!"); return true; }
                 if (!"4c6e2ab319d5f780".contains(color)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified color does §cnot exist§7!"); return true; }
-                if (PlayerRank.isRankExistent(dpName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + dpName + "§7 already exists!"); return true; }
+                if (Rank.isRankExistent(dpName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + dpName + "§7 already exists!"); return true; }
 
-                PlayerRank rank = PlayerRank.newRank(dpName, color);
+                Rank rank = Rank.newRank(dpName, color);
                 if (strings.length > 4) {
-                    if (!PermissionGroup.groupNames().contains(strings[4])) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
-                    rank.setGroup(PermissionGroup.get(strings[4]));
+                    if (!Group.groupNames().contains(strings[4])) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno group§7 with the specified name!"); return true; }
+                    rank.setGroup(Group.get(strings[4]));
                 }
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You have created the rank §" + color + dpName + "§7!");
                 return true;
@@ -391,11 +390,11 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please enter the §cname§7 of the rank you would like to delete!"); return true; }
                 String dpName = strings[2];
 
-                if (!PlayerRank.isRankExistent(dpName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno rank§7 with the specified name!"); return true; }
+                if (!Rank.isRankExistent(dpName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno rank§7 with the specified name!"); return true; }
                 if (DefaultConfiguration.defaultRank.get().equals(dpName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You cannot §cdelete the default rank§7! Change it in the configs!"); return true; }
 
-                PlayerRank.deleteRank(PlayerRank.get(dpName).id());
-                PlayerRank.resortRanks();
+                Rank.deleteRank(Rank.get(dpName).id());
+                Rank.resortRanks();
                 ScoreboardSystem.reloadAll();
 
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "You have successfully deleted the rank §c" + dpName + "§7!");
@@ -407,20 +406,20 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please §center a rank§7 you would like to modify!"); return true; }
                 String rankName = strings[2];
 
-                if (!PlayerRank.isRankExistent(rankName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno rank§7 with the specified name!"); return true; }
+                if (!Rank.isRankExistent(rankName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno rank§7 with the specified name!"); return true; }
                 if (strings.length < 4) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please specify an §coption§7 you would like to modify!"); return true; }
                 String option3_key = strings[3];
 
                 if (option3_key.equals("moveDown")) {
-                    PlayerRank rank = PlayerRank.get(rankName);
-                    if (rank.position() > PlayerRank.ranks().size() - 2) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank is already at the §cbottom§7!"); return true; }
+                    Rank rank = Rank.get(rankName);
+                    if (rank.position() > Rank.ranks().size() - 2) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank is already at the §cbottom§7!"); return true; }
 
-                    PlayerRank upRank = PlayerRank.get(rank.position() + 1);
+                    Rank upRank = Rank.get(rank.position() + 1);
                     if (upRank != null) upRank.setPosition(upRank.position() -1);
 
                     rank.setPosition(rank.position() +1);
 
-                    PlayerRank downRank = PlayerRank.get(rank.position() +1);
+                    Rank downRank = Rank.get(rank.position() +1);
 
                     String ranks = "§8...§7, ";
                     if (upRank != null) { ranks += upRank.color() + upRank.displayName() + "§7, "; } else { ranks += "§0none§7, "; }
@@ -434,15 +433,15 @@ public class SimpleRanksCommand implements CommandExecutor {
                 }
 
                 if (option3_key.equals("moveUp")) {
-                    PlayerRank rank = PlayerRank.get(rankName);
+                    Rank rank = Rank.get(rankName);
                     if (rank.position() < 1) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank is already at the §ctop§7!"); return true; }
 
-                    PlayerRank downRank = PlayerRank.get(rank.position() - 1);
+                    Rank downRank = Rank.get(rank.position() - 1);
                     if (downRank != null) downRank.setPosition(downRank.position() +1);
 
                     rank.setPosition(rank.position() -1);
 
-                    PlayerRank upRank = PlayerRank.get(rank.position() - 1);
+                    Rank upRank = Rank.get(rank.position() - 1);
 
                     String ranks = "§8...§7, ";
                     if (upRank != null) { ranks += upRank.color() + upRank.displayName() + "§7, "; } else { ranks += "§0none§7, "; }
@@ -459,10 +458,10 @@ public class SimpleRanksCommand implements CommandExecutor {
                 String option3_value = strings[4];
 
                 if (option3_key.equals("setDisplayName")) {
-                    if (option3_value.length() > PlayerRank.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PlayerRank.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
-                    if (PlayerRank.isRankExistent(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + option3_value + "§7 already exists!"); return true; }
+                    if (option3_value.length() > Rank.NAME_CHAR_LIMIT) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Rank.NAME_CHAR_LIMIT + "§7 characters!"); return true; }
+                    if (Rank.isRankExistent(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + option3_value + "§7 already exists!"); return true; }
                     try {
-                        PlayerRank.get(rankName).setDisplayName(option3_value);
+                        Rank.get(rankName).setDisplayName(option3_value);
                         if (DefaultConfiguration.defaultRank.get().equals(rankName)) DefaultConfiguration.defaultRank.set(option3_value);
                     } catch (Exception e) { e.printStackTrace(); }
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "You changed the name of the rank §c" + rankName + "§7 to §a" + option3_value + "§7!");
@@ -473,16 +472,16 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (option3_key.equals("setColor")) {
                     if (option3_value.length() > 1) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The color must be a §csingle letter§7!"); return true; }
                     if (!"4c6e2ab319d5f780".contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The specified color does §cnot exist§7!"); return true; }
-                    String oldC = PlayerRank.get(rankName).color();
-                    PlayerRank.get(rankName).setColor(option3_value);
+                    String oldC = Rank.get(rankName).color();
+                    Rank.get(rankName).setColor(option3_value);
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "You changed the rank color from " + oldC + "color§7 to §" + option3_value + "color§7!");
                     ScoreboardSystem.reloadAll();
                     return true;
                 }
 
                 if (option3_key.equals("setGroup")) {
-                    if (!PermissionGroup.groupNames().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + option3_value + "§7 does not exists!"); return true; }
-                    PlayerRank.get(rankName).setGroup(PermissionGroup.get(option3_value));
+                    if (!Group.groupNames().contains(option3_value)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + option3_value + "§7 does not exists!"); return true; }
+                    Rank.get(rankName).setGroup(Group.get(option3_value));
                     commandSender.sendMessage(Prefix.SYSTEM.def() + "You changed the group of the rank to §a" + option3_value + "§7!");
                     PermissionsManager.reload();
                     return true;
@@ -496,8 +495,8 @@ public class SimpleRanksCommand implements CommandExecutor {
                 if (!commandSender.hasPermission(Permissions.SETUP_RANK_INFO.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to execute this subcommand!"); return true; }
                 if (strings.length < 3) { commandSender.sendMessage(Prefix.SYSTEM.err() + "Please §center a rank§7 from which you would like to access the information!"); return true; }
                 String rankName = strings[2];
-                if (!PlayerRank.isRankExistent(rankName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno rank§7 with the specified name!"); return true; }
-                PlayerRank rank = PlayerRank.get(rankName);
+                if (!Rank.isRankExistent(rankName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "There is §cno rank§7 with the specified name!"); return true; }
+                Rank rank = Rank.get(rankName);
 
                 commandSender.sendMessage("");
                 commandSender.sendMessage(Prefix.SYSTEM.def() + "§a§lInformations of the rank \"" + rank.displayName() + "\":");
@@ -538,7 +537,7 @@ public class SimpleRanksCommand implements CommandExecutor {
     }
 
     public void sendInfo(CommandSender s) {
-        PluginDescriptionFile meta = Simpleranks.instance.getDescription();
+        PluginDescriptionFile meta = SimpleRanks.getInstance().getDescription();
         s.sendMessage("");
         s.sendMessage(Prefix.SYSTEM.def() +"§a§lPlugin Information:");
         s.sendMessage(Prefix.SYSTEM.def() + "Version: " + meta.getVersion());

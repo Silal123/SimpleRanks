@@ -1,19 +1,16 @@
 package simpleranks.utils.config;
 
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.utils.JsonManager;
-import simpleranks.utils.config.ConfigValue;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
 
 public class DefaultConfiguration {
-    public static File configFile = new File(Simpleranks.data + File.separator + "config.json");
+    public static File configFile = new File(SimpleRanks.getInstance().getDataFolder().getPath() + File.separator + "config.json");
 
     public static ConfigValue<String> defaultRank = new ConfigValue<>("defaultRank", String.class, configFile.toPath(), "Spieler");
 

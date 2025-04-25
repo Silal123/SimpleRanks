@@ -28,13 +28,13 @@ public class RankCommand implements CommandExecutor {
             if (!commandSender.hasPermission(Permissions.SET_RANK.perm())) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to update the rank!"); return true; }
             if (strings.length < 3) { sendHelp(commandSender); return true; }
             String rankName = strings[2];
-            if (!PlayerRank.isRankExistent(rankName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank you specified does §cnot exist§7!"); return true; }
-            PlayerRank rank = PlayerRank.get(rankName);
+            if (!Rank.isRankExistent(rankName)) { commandSender.sendMessage(Prefix.SYSTEM.err() + "The rank you specified does §cnot exist§7!"); return true; }
+            Rank rank = Rank.get(rankName);
 
             PlayerConfiguration conf = PlayerConfiguration.getFor(updateP.getUniqueId());
             if (!commandSender.hasPermission(Permissions.SET_RANK_ALL.perm())) {
                 if (commandSender instanceof Player p) {
-                    PlayerRank setterrank = PlayerConfiguration.getFor(p).getRank();
+                    Rank setterrank = PlayerConfiguration.getFor(p).getRank();
                     if (setterrank.position() > rank.position()) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are not allowed to assign a §chigher rank§7!"); return true; }
                     if (conf.getRank().position() < setterrank.position()) { commandSender.sendMessage(Prefix.SYSTEM.err() + "You are §cnot allowed§7 to update the rank of a higher player!"); return true; }
                 }

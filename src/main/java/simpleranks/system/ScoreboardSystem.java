@@ -1,18 +1,15 @@
 package simpleranks.system;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.utils.JavaTools;
-import simpleranks.utils.PlayerRank;
+import simpleranks.utils.Rank;
 import simpleranks.utils.config.DefaultConfiguration;
 import simpleranks.utils.config.PlayerConfiguration;
 
@@ -44,7 +41,7 @@ public class ScoreboardSystem {
 
         if (!DefaultConfiguration.teamRankEnabled.get()) return;
 
-        for (PlayerRank this_rank : PlayerRank.ranks()) {
+        for (Rank this_rank : Rank.ranks()) {
             Team t = scoreboard.registerNewTeam(this_rank.teamName());
 
             try {
@@ -59,12 +56,12 @@ public class ScoreboardSystem {
                 }
             }
 
-            if (!PlayerRank.colors().contains(DefaultConfiguration.teamRankPlayerNameColor.get())) t.setColor(ChatColor.getByChar('7'));
+            if (!Rank.colors().contains(DefaultConfiguration.teamRankPlayerNameColor.get())) t.setColor(ChatColor.getByChar('7'));
             else t.setColor(ChatColor.getByChar(DefaultConfiguration.teamRankPlayerNameColor.get()));
         }
 
         for (Player this_player : Bukkit.getOnlinePlayers()) {
-            PlayerRank this_rank = PlayerConfiguration.getFor(this_player).getRank();
+            Rank this_rank = PlayerConfiguration.getFor(this_player).getRank();
             scoreboard.getTeam(this_rank.teamName()).addPlayer(this_player);
         }
 
@@ -92,7 +89,7 @@ public class ScoreboardSystem {
         if (!DefaultConfiguration.chatRankEnabled.get()) return;
 
         PlayerConfiguration conf = PlayerConfiguration.getFor(e.getPlayer());
-        PlayerRank rank = conf.getRank();
+        Rank rank = conf.getRank();
 
         String format = DefaultConfiguration.chatRankFormat.get().replace("&", "§");
         String message = format.replace("%rank_color%", rank.color())
@@ -100,7 +97,7 @@ public class ScoreboardSystem {
                 .replace("%player_name%", "%1$s")
                 .replace("%message%", "%2$s");
 
-        if (Simpleranks.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        if (SimpleRanks.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             message = PlaceholderAPI.setPlaceholders(e.getPlayer(), message);
         }
 

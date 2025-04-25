@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import simpleranks.utils.Permissions;
-import simpleranks.utils.PlayerRank;
+import simpleranks.utils.Rank;
 import simpleranks.utils.config.DefaultConfiguration;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class RankCommandTabComplete implements TabCompleter {
 
         if (strings.length == 3 && strings[1].equals("set")) {
             if (commandSender.hasPermission(Permissions.SET_RANK.perm())) {
-                for (String rankName : PlayerRank.rankNames()) {
+                for (String rankName : Rank.rankNames()) {
                     if (!rankName.startsWith(strings[2])) continue;
                     complete.add(rankName);
                 }

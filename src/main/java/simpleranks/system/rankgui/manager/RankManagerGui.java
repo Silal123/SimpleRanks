@@ -1,6 +1,5 @@
 package simpleranks.system.rankgui.manager;
 
-import org.apache.logging.log4j.core.layout.CsvLogEventLayout;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -15,7 +14,7 @@ import java.util.*;
 public class RankManagerGui extends Gui {
 
     private RankManagerPage page;
-    private PlayerRank rank;
+    private Rank rank;
     private Map<String, Object> createData = new HashMap<>();
 
     private int homePage = 0;
@@ -23,10 +22,10 @@ public class RankManagerGui extends Gui {
     private int ITEMS_PER_PAGE = 18;
     private Map<Integer, Object> itemIndexes = new HashMap<>();
 
-    private List<PermissionGroup> groupStorage = new ArrayList<>();
-    private List<PlayerRank> rankStorage = new ArrayList<>();
+    private List<Group> groupStorage = new ArrayList<>();
+    private List<Rank> rankStorage = new ArrayList<>();
 
-    private PermissionGroup selectedGroup;
+    private Group selectedGroup;
 
     private Object editItem;
 
@@ -56,14 +55,14 @@ public class RankManagerGui extends Gui {
     }
 
 
-    public ItemStack buildRankItem(PlayerRank rank) {
+    public ItemStack buildRankItem(Rank rank) {
         return new ItemBuilder(Material.PAPER, 1)
                 .setDisplayName(rank.color() + rank.displayName())
                 .setLore("", "§7Color: §" + rank.color() + rank.colorCode(), "§7Position: §a" + rank.position(), (rank.group() == null ? null : "§7Group: §a" + rank.group().name()), "", "§aCLICK§7 to edit")
                 .build();
     }
 
-    public ItemStack buildRankGroupItem(PermissionGroup group) {
+    public ItemStack buildRankGroupItem(Group group) {
         return new ItemBuilder(Material.BOOK, 1)
                 .setDisplayName(group.name())
                 .setLore("", "§7Ranks: §a" + group.getRanks().size(), "", "§aCLICK§7 to view ranks", "§cRIGHT-CLICK§7 to edit")
@@ -77,12 +76,12 @@ public class RankManagerGui extends Gui {
         itemIndexes.clear();
 
         int startIndex = homePage * ITEMS_PER_PAGE;
-        this.groupStorage = PermissionGroup.groups();
+        this.groupStorage = Group.groups();
 
         for (int i = 0; i < ITEMS_PER_PAGE; i++) {
             int itemIndex = startIndex + i;
             if (itemIndex > groupStorage.size() -1) break;
-            PermissionGroup group = groupStorage.get(itemIndex);
+            Group group = groupStorage.get(itemIndex);
             activeInventory.setItem(i, buildRankGroupItem(group));
             itemIndexes.put(i, group);
         }
@@ -148,7 +147,7 @@ public class RankManagerGui extends Gui {
         if (itemIndexes.containsKey(slot)) {
             Object clicked = itemIndexes.get(slot);
 
-            if (clicked instanceof PermissionGroup g) {
+            if (clicked instanceof Group g) {
                 if (e.isRightClick()) {
                     editItem = g;
                     loadEditInventory();
@@ -183,7 +182,7 @@ public class RankManagerGui extends Gui {
         for (int i = 0; i < ITEMS_PER_PAGE; i++) {
             int itemIndex = startIndex + i;
             if (itemIndex > rankStorage.size() -1) break;
-            PlayerRank rank = rankStorage.get(itemIndex);
+            Rank rank = rankStorage.get(itemIndex);
             activeInventory.setItem(i, buildRankItem(rank));
             itemIndexes.put(i, rank);
         }
@@ -251,7 +250,7 @@ public class RankManagerGui extends Gui {
         if (itemIndexes.containsKey(slot)) {
             Object clicked = itemIndexes.get(slot);
 
-            if (clicked instanceof PlayerRank r) {
+            if (clicked instanceof Rank r) {
                 if (e.isRightClick()) return;
                 editItem = r;
                 loadEditInventory();
@@ -288,7 +287,7 @@ public class RankManagerGui extends Gui {
 
         if (type.equals(CreateType.RANK)) {
             Color color = (Color) createData.getOrDefault("color", Color.WHITE);
-            PermissionGroup group = (PermissionGroup) createData.getOrDefault("group", PermissionGroup.getDefaultGroup());
+            Group group = (Group) createData.getOrDefault("group", Group.getDefaultGroup());
 
             ItemStack editName = new ItemBuilder(Material.NAME_TAG, 1)
                     .setDisplayName(name == null ? "§eSet the name" : "§a" + name)
@@ -402,7 +401,7 @@ public class RankManagerGui extends Gui {
             }
 
             Color color = (Color) createData.getOrDefault("color", Color.WHITE);
-            PermissionGroup group = (PermissionGroup) createData.getOrDefault("group", PermissionGroup.getDefaultGroup());
+            Group group = (Group) createData.getOrDefault("group", Group.getDefaultGroup());
 
             if (slot == RankManagerItem.CREATE_CONFIRM.slot()) {
                 if (color == null) {
@@ -421,8 +420,8 @@ public class RankManagerGui extends Gui {
                 }
 
                 close();
-                PlayerRank rank = PlayerRank.newRank(name, color.colorCode());
-                if (group != PermissionGroup.getDefaultGroup()) rank.setGroup(group);
+                Rank rank = Rank.newRank(name, color.colorCode());
+                if (group != Group.getDefaultGroup()) rank.setGroup(group);
                 p.sendMessage(Prefix.SYSTEM.def() + "The rank " + rank.color() + rank.displayName() + "§7 was successfully created!");
                 return;
             }
@@ -443,13 +442,13 @@ public class RankManagerGui extends Gui {
                         return;
                     }
 
-                    if (res.length() > PlayerRank.NAME_CHAR_LIMIT) {
-                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PlayerRank.NAME_CHAR_LIMIT + "§7 characters!");
+                    if (res.length() > Rank.NAME_CHAR_LIMIT) {
+                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Rank.NAME_CHAR_LIMIT + "§7 characters!");
                         openCreator(p, createData);
                         return;
                     }
 
-                    if (PlayerRank.isRankExistent(res)) {
+                    if (Rank.isRankExistent(res)) {
                         p.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + res + "§7 already exists!");
                         openCreator(p, createData);
                         return;
@@ -478,9 +477,9 @@ public class RankManagerGui extends Gui {
 
             if (slot == RankManagerItem.CREATE_GROUP.slot()) {
                 close();
-                if (groupStorage.isEmpty()) groupStorage = PermissionGroup.groups();
+                if (groupStorage.isEmpty()) groupStorage = Group.groups();
                 p.sendMessage(Prefix.SYSTEM.def() + "All existing §agroups§7: ");
-                for (PermissionGroup g : groupStorage) {
+                for (Group g : groupStorage) {
                     p.sendMessage(Prefix.SYSTEM.def() + "§8-§7 " + g.name());
                 }
                 p.sendMessage(Prefix.SYSTEM.def() + "Please input the §aname of the Group§7: (type 'exit' to exit)");
@@ -497,13 +496,13 @@ public class RankManagerGui extends Gui {
                         return;
                     }
 
-                    if (!PermissionGroup.isGroupExistent(res)) {
+                    if (!Group.isGroupExistent(res)) {
                         p.sendMessage(Prefix.SYSTEM.err() + "The specified §cGroup§7 is not existent!");
                         openCreator(p, createData);
                         return;
                     }
 
-                    PermissionGroup sg = PermissionGroup.get(res);
+                    Group sg = Group.get(res);
                     createData.put("group", sg);
                     p.sendMessage(Prefix.SYSTEM.def() + "You selected the group §a" + group.name() + "§7!");
                     openCreator(p, createData);
@@ -531,7 +530,7 @@ public class RankManagerGui extends Gui {
                 }
 
                 close();
-                PermissionGroup group = PermissionGroup.newGroup(name, permissions);
+                Group group = Group.newGroup(name, permissions);
                 p.sendMessage(Prefix.SYSTEM.def() + "The group §a" + group.name() + "§7 was successfully created!");
                 return;
             }
@@ -552,13 +551,13 @@ public class RankManagerGui extends Gui {
                         return;
                     }
 
-                    if (res.length() > PermissionGroup.NAME_CHAR_LIMIT) {
-                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PermissionGroup.NAME_CHAR_LIMIT + "§7 characters!");
+                    if (res.length() > Group.NAME_CHAR_LIMIT) {
+                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Group.NAME_CHAR_LIMIT + "§7 characters!");
                         openCreator(p, createData);
                         return;
                     }
 
-                    if (PermissionGroup.isGroupExistent(res)) {
+                    if (Group.isGroupExistent(res)) {
                         p.sendMessage(Prefix.SYSTEM.err() + "A group with the name §c" + res + "§7 already exists!");
                         openCreator(p, createData);
                         return;
@@ -635,7 +634,7 @@ public class RankManagerGui extends Gui {
 
         if (editItem == null) return;
 
-        if (editItem instanceof PlayerRank r) {
+        if (editItem instanceof Rank r) {
             if (!owner.hasPermission(Permissions.SETUP_RANK_MODIFY.perm())) {
                 ItemStack noPermission = new ItemBuilder(Material.BARRIER, 1)
                         .setDisplayName("§cNo permission")
@@ -679,7 +678,7 @@ public class RankManagerGui extends Gui {
             activeInventory.setItem(RankManagerItem.MOVE_DOWN.slot(), moveDown);
         }
 
-        if (editItem instanceof PermissionGroup g) {
+        if (editItem instanceof Group g) {
             if (!owner.hasPermission(Permissions.SETUP_GROUP_MODIFY.perm())) {
                 ItemStack noPermission = new ItemBuilder(Material.BARRIER, 1)
                         .setDisplayName("§cNo permission")
@@ -758,7 +757,7 @@ public class RankManagerGui extends Gui {
         Player p = (Player) e.getWhoClicked();
         int slot = e.getSlot();
 
-        if (editItem instanceof PlayerRank r) {
+        if (editItem instanceof Rank r) {
             if (!p.hasPermission(Permissions.SETUP_RANK_MODIFY.perm())) {
                 p.sendMessage(Prefix.SYSTEM.err() + "You need §crank modify§7 permissions to do that!");
                 return;
@@ -786,13 +785,13 @@ public class RankManagerGui extends Gui {
                         return;
                     }
 
-                    if (res.length() > PlayerRank.NAME_CHAR_LIMIT) {
-                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PlayerRank.NAME_CHAR_LIMIT + "§7 characters!");
+                    if (res.length() > Rank.NAME_CHAR_LIMIT) {
+                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Rank.NAME_CHAR_LIMIT + "§7 characters!");
                         openEditor(p, r);
                         return;
                     }
 
-                    if (PlayerRank.isRankExistent(res)) {
+                    if (Rank.isRankExistent(res)) {
                         p.sendMessage(Prefix.SYSTEM.err() + "A rank with the name §c" + res + "§7 already exists!");
                         openEditor(p, r);
                         return;
@@ -822,9 +821,9 @@ public class RankManagerGui extends Gui {
 
             if (slot == RankManagerItem.EDIT_GROUP.slot()) {
                 close();
-                if (groupStorage.isEmpty()) groupStorage = PermissionGroup.groups();
+                if (groupStorage.isEmpty()) groupStorage = Group.groups();
                 p.sendMessage(Prefix.SYSTEM.def() + "All existing §agroups§7: ");
-                for (PermissionGroup group : groupStorage) {
+                for (Group group : groupStorage) {
                     p.sendMessage(Prefix.SYSTEM.def() + (r.group().id() == group.id() ? "§a✔§7 " : "§8-§7") + " " + group.name());
                 }
                 p.sendMessage(Prefix.SYSTEM.def() + "Please input the §aname of the Group§7: (type 'exit' to exit)");
@@ -841,13 +840,13 @@ public class RankManagerGui extends Gui {
                         return;
                     }
 
-                    if (!PermissionGroup.isGroupExistent(res)) {
+                    if (!Group.isGroupExistent(res)) {
                         p.sendMessage(Prefix.SYSTEM.err() + "The specified §cGroup§7 is not existent!");
                         openEditor(p, r);
                         return;
                     }
 
-                    PermissionGroup group = PermissionGroup.get(res);
+                    Group group = Group.get(res);
                     r.setGroup(group);
                     p.sendMessage(Prefix.SYSTEM.def() + "You changed the group of the Rank §6" + r.displayName() + "§7 to §a" + group.name() + "§7!");
                     openEditor(p, r);
@@ -861,7 +860,7 @@ public class RankManagerGui extends Gui {
                     return;
                 }
                 int oldPos = r.position();
-                PlayerRank downRank = PlayerRank.get(r.position() - 1);
+                Rank downRank = Rank.get(r.position() - 1);
                 if (downRank != null) downRank.setPosition(downRank.position() +1);
                 r.setPosition(r.position() -1);
                 p.sendMessage(Prefix.SYSTEM.def() + "The rank was moved from §e" + oldPos + "§7 to §a" + r.position() + "§7");
@@ -870,12 +869,12 @@ public class RankManagerGui extends Gui {
             }
 
             if (slot == RankManagerItem.MOVE_DOWN.slot()) {
-                if (r.position() > PlayerRank.ranks().size() - 2) {
+                if (r.position() > Rank.ranks().size() - 2) {
                     p.sendMessage(Prefix.SYSTEM.err() + "The rank is already at the §cbottom§7!");
                     return;
                 }
                 int oldPos = r.position();
-                PlayerRank upRank = PlayerRank.get(r.position() + 1);
+                Rank upRank = Rank.get(r.position() + 1);
                 if (upRank != null) upRank.setPosition(upRank.position() -1);
                 r.setPosition(r.position() +1);
                 p.sendMessage(Prefix.SYSTEM.def() + "The rank was moved from §e" + oldPos + "§7 to §a" + r.position() + "§7");
@@ -884,7 +883,7 @@ public class RankManagerGui extends Gui {
             }
         }
 
-        if (editItem instanceof PermissionGroup g) {
+        if (editItem instanceof Group g) {
             if (!p.hasPermission(Permissions.SETUP_GROUP_MODIFY.perm())) {
                 p.sendMessage(Prefix.SYSTEM.err() + "You need §cgroup modify§7 permissions to do that!");
                 return;
@@ -912,13 +911,13 @@ public class RankManagerGui extends Gui {
                         return;
                     }
 
-                    if (res.length() > PermissionGroup.NAME_CHAR_LIMIT) {
-                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + PermissionGroup.NAME_CHAR_LIMIT + "§7 characters!");
+                    if (res.length() > Group.NAME_CHAR_LIMIT) {
+                        p.sendMessage(Prefix.SYSTEM.err() + "The specified name is too long! Please use a §cmaximum of " + Group.NAME_CHAR_LIMIT + "§7 characters!");
                         openEditor(p, g);
                         return;
                     }
 
-                    if (PermissionGroup.isGroupExistent(res)) {
+                    if (Group.isGroupExistent(res)) {
                         p.sendMessage(Prefix.SYSTEM.err() + "A group with the name §c" + res + "§7 already exists!");
                         openEditor(p, g);
                         return;

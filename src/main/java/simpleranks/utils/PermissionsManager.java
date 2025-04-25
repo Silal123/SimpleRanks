@@ -3,7 +3,7 @@ package simpleranks.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.utils.config.PlayerConfiguration;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ public class PermissionsManager {
     public static Map<UUID, PermissionAttachment> permissionAttachments = new HashMap<>();
 
     public static void addPermissionToPlayer(Player p, String permission) {
-        PermissionAttachment attachment = permissionAttachments.computeIfAbsent(p.getUniqueId(), uuid -> p.addAttachment(Simpleranks.instance));
+        PermissionAttachment attachment = permissionAttachments.computeIfAbsent(p.getUniqueId(), uuid -> p.addAttachment(SimpleRanks.getInstance()));
         attachment.setPermission(permission, true);
         p.recalculatePermissions();
     }
@@ -57,7 +57,7 @@ public class PermissionsManager {
 
     public static void addPermissionGroupPermissionsToPlayer(Player p) {
         removeAllPermissionsFromPlayer(p);
-        PermissionGroup group = PlayerConfiguration.getFor(p).getRank().group();
+        Group group = PlayerConfiguration.getFor(p).getRank().group();
         for (String perm : group.permissions()) {
             addPermissionToPlayer(p, perm);
         }

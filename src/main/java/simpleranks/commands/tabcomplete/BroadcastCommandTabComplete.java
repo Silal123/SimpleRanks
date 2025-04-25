@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import simpleranks.utils.PlayerRank;
+import simpleranks.utils.Rank;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class BroadcastCommandTabComplete implements TabCompleter {
         List<String> complete = new ArrayList<>();
 
         if (args.length == 1) {
-            PlayerRank.ranks().stream().filter(rank -> rank.displayName().startsWith(args[0])).forEach(rank -> complete.add(rank.displayName()));
+            Rank.ranks().stream().filter(rank -> rank.displayName().startsWith(args[0])).forEach(rank -> complete.add(rank.displayName()));
         }
 
         return complete;

@@ -6,10 +6,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.utils.Permissions;
-import simpleranks.utils.PlayerRank;
-import simpleranks.utils.PermissionGroup;
+import simpleranks.utils.Rank;
+import simpleranks.utils.Group;
 import simpleranks.utils.config.DefaultConfiguration;
 
 import java.util.ArrayList;
@@ -74,11 +74,11 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
         }
 
         if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("teamRankPlayerNameColor")) {
-            complete.addAll(PlayerRank.colors());
+            complete.addAll(Rank.colors());
         }
 
         if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("defaultGroup")) {
-            for (String name : PermissionGroup.groupNames()) {
+            for (String name : Group.groupNames()) {
                 if (!name.startsWith(strings[2])) continue;
                 complete.add(name);
             }
@@ -89,7 +89,7 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
         }
 
         if (strings.length == 3 && strings[0].equals("config") && strings[1].equals("defaultRank") && commandSender.hasPermission(Permissions.CONFIG.perm())) {
-            for (String rankName : PlayerRank.rankNames()) {
+            for (String rankName : Rank.rankNames()) {
                 if (!rankName.startsWith(strings[2])) continue;
                 complete.add(rankName);
             }
@@ -113,14 +113,14 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
 
         if (strings.length == 3 && strings[1].equals("modify") && commandSender.hasPermission(Permissions.SETUP_RANK_MODIFY.perm())) {
             if (strings[0].equals("group")) {
-                for (String name : PermissionGroup.groupNames()) {
+                for (String name : Group.groupNames()) {
                     if (!name.startsWith(strings[2])) continue;
                     complete.add(name);
                 }
             }
 
             if (strings[0].equals("rank")) {
-                for (String rankName : PlayerRank.rankNames()) {
+                for (String rankName : Rank.rankNames()) {
                     if (!rankName.startsWith(strings[2])) continue;
                     complete.add(rankName);
                 }
@@ -144,17 +144,17 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
             }
         }
 
-        if (strings.length == 5 && strings[0].equals("group") && strings[1].equals("modify") && PermissionGroup.groupNames().contains(strings[2]) && strings[3].equals("addPermission")) {
-            PermissionGroup group = PermissionGroup.get(strings[2]);
-            for (Permission perm : Simpleranks.instance.getServer().getPluginManager().getPermissions()) {
+        if (strings.length == 5 && strings[0].equals("group") && strings[1].equals("modify") && Group.groupNames().contains(strings[2]) && strings[3].equals("addPermission")) {
+            Group group = Group.get(strings[2]);
+            for (Permission perm : SimpleRanks.getInstance().getServer().getPluginManager().getPermissions()) {
                 if (!perm.getName().startsWith(strings[4])) continue;
                 if (group.permissions().contains(perm.getName())) continue;
                 complete.add(perm.getName());
             }
         }
 
-        if (strings.length == 5 && strings[0].equals("group") && strings[1].equals("modify") && PermissionGroup.groupNames().contains(strings[2]) && strings[3].equals("removePermission")) {
-            for (String perm : PermissionGroup.get(strings[2]).permissions()) {
+        if (strings.length == 5 && strings[0].equals("group") && strings[1].equals("modify") && Group.groupNames().contains(strings[2]) && strings[3].equals("removePermission")) {
+            for (String perm : Group.get(strings[2]).permissions()) {
                 if (!perm.startsWith(strings[4])) continue;
                 complete.add(perm);
             }
@@ -162,13 +162,13 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
 
         if (strings.length == 5 && strings[1].equals("modify") && strings[3].equals("setColor") && commandSender.hasPermission(Permissions.SETUP_RANK_MODIFY.perm())) {
             if (strings[0].equals("rank")) {
-                complete.addAll(PlayerRank.colors());
+                complete.addAll(Rank.colors());
             }
         }
 
         if (strings.length == 5 && strings[1].equals("modify") && strings[3].equals("setGroup") && commandSender.hasPermission(Permissions.SETUP_GROUP_MODIFY.perm())) {
             if (strings[0].equals("rank")) {
-                for (String name : PermissionGroup.groupNames()) {
+                for (String name : Group.groupNames()) {
                     if (!name.startsWith(strings[4])) continue;
                     complete.add(name);
                 }
@@ -177,14 +177,14 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
 
         if (strings.length == 3 && strings[1].equals("delete") && commandSender.hasPermission(Permissions.SETUP_RANK_DELETE.perm())) {
             if (strings[0].equals("group")) {
-                for (String name : PermissionGroup.groupNames()) {
+                for (String name : Group.groupNames()) {
                     if (!name.startsWith(strings[2])) continue;
                     complete.add(name);
                 }
             }
 
             if (strings[0].equals("rank")) {
-                for (String rankName : PlayerRank.rankNames()) {
+                for (String rankName : Rank.rankNames()) {
                     if (!rankName.startsWith(strings[2])) continue;
                     complete.add(rankName);
                 }
@@ -193,14 +193,14 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
 
         if (strings.length == 3 && strings[1].equals("info") && commandSender.hasPermission(Permissions.SETUP_RANK_INFO.perm())) {
             if (strings[0].equals("group")) {
-                for (String name : PermissionGroup.groupNames()) {
+                for (String name : Group.groupNames()) {
                     if (!name.startsWith(strings[2])) continue;
                     complete.add(name);
                 }
             }
 
             if (strings[0].equals("rank")) {
-                for (String rankName : PlayerRank.rankNames()) {
+                for (String rankName : Rank.rankNames()) {
                     if (!rankName.startsWith(strings[2])) continue;
                     complete.add(rankName);
                 }
@@ -209,7 +209,7 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
 
         if (strings.length == 4 && strings[1].equals("create") && commandSender.hasPermission(Permissions.SETUP_RANK_CREATE.perm())) {
             if (strings[0].equals("rank")) {
-                complete.addAll(PlayerRank.colors());
+                complete.addAll(Rank.colors());
             }
 
             if (strings[0].equals("group")) {
@@ -219,7 +219,7 @@ public class SimpleRanksComandTabComplete implements TabCompleter {
 
         if (strings.length == 5 && strings[1].equals("create") && commandSender.hasPermission(Permissions.SETUP_RANK_CREATE.perm())) {
             if (strings[0].equals("rank")) {
-                for (String name : PermissionGroup.groupNames()) {
+                for (String name : Group.groupNames()) {
                     if (!name.startsWith(strings[4])) continue;
                     complete.add(name);
                 }

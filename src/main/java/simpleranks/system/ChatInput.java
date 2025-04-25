@@ -3,9 +3,7 @@ package simpleranks.system;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import simpleranks.Simpleranks;
-import simpleranks.utils.PlayerRank;
-import simpleranks.utils.Prefix;
+import simpleranks.SimpleRanks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +24,7 @@ public class ChatInput {
         e.setCancelled(true);
         Consumer<String> callback = listening.get(p.getUniqueId());
         listening.remove(p.getUniqueId());
-        Bukkit.getScheduler().runTask(Simpleranks.instance, () -> callback.accept(e.getMessage()));
+        Bukkit.getScheduler().runTask(SimpleRanks.getInstance(), () -> callback.accept(e.getMessage()));
         return true;
     }
 

@@ -1,6 +1,6 @@
 package simpleranks.utils;
 
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 
 import java.io.File;
 import java.sql.Connection;
@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class Database {
 
-    private static String databasePath = Simpleranks.instance.getDataFolder().getAbsolutePath() + File.separator + "database.db";
+    private static String databasePath = SimpleRanks.getInstance().getDataFolder().getAbsolutePath() + File.separator + "database.db";
     private static String databaseUrl = "jdbc:sqlite://" + databasePath;
     private static String databaseUsername = "";
     private static String databasePassword = "";

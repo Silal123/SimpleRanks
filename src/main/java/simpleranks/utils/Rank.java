@@ -8,27 +8,27 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-public class PlayerRank extends Database {
+public class Rank extends Database {
 
     public static int NAME_CHAR_LIMIT = 100;
 
     private long id;
 
-    public PlayerRank(long id) {
+    public Rank(long id) {
         this.id = id;
     }
 
-    public static PlayerRank newRank(String dpn, String color) {
+    public static Rank newRank(String dpn, String color) {
         long id = new Random().nextLong(); id = Math.abs(id) % 10000000000000000L;
-        List<Long> ranks = PlayerRank.rankIds();
+        List<Long> ranks = Rank.rankIds();
         while (ranks.contains(id)) { id = new Random().nextLong(); id = Math.abs(id) % 10000000000000000L; }
 
         int position = - 1;
         if (dpn.equals(DefaultConfiguration.defaultRank.get())) {
             position = rankNames().size() + 2;
         } else {
-            if (!PlayerRank.rankNames().isEmpty()) {
-                if (PlayerRank.rankNames().contains(getDefaultRank().displayName())) { position = position-1; }
+            if (!Rank.rankNames().isEmpty()) {
+                if (Rank.rankNames().contains(getDefaultRank().displayName())) { position = position-1; }
             }
         }
 
@@ -36,7 +36,7 @@ public class PlayerRank extends Database {
             database.executeUpdate("INSERT INTO " + ranksDataTable + " (`id`, `displayName`, `color`, `position`) VALUES ('" + id + "', '" + dpn + "', '" + color + "', '" + position + "')");
         } catch (Exception e) { e.printStackTrace(); }
         resortRanks();
-        return PlayerRank.get(id);
+        return Rank.get(id);
     }
 
     public static void deleteRank(long id) {
@@ -46,31 +46,31 @@ public class PlayerRank extends Database {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public static PlayerRank get(long id) {
-        return new PlayerRank(id);
+    public static Rank get(long id) {
+        return new Rank(id);
     }
-    public static PlayerRank get(String name) {
+    public static Rank get(String name) {
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksDataTable + " WHERE displayName = '" + name + "';");
             String temp_id = null; if (rs.next()) { temp_id = rs.getString("id"); }
             rs.close();
-            if (temp_id == null) return PlayerRank.getDefaultRank();
-            if (!JavaTools.isLong(temp_id)) return PlayerRank.getDefaultRank();
-            return PlayerRank.get(Long.valueOf(temp_id));
+            if (temp_id == null) return Rank.getDefaultRank();
+            if (!JavaTools.isLong(temp_id)) return Rank.getDefaultRank();
+            return Rank.get(Long.valueOf(temp_id));
         } catch (Exception e) { e.printStackTrace(); }
-        return PlayerRank.getDefaultRank();
+        return Rank.getDefaultRank();
     }
 
-    public static PlayerRank get(int position) {
+    public static Rank get(int position) {
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksDataTable + " WHERE position = '" + position + "';");
             String temp_id = null; if (rs.next()) { temp_id = rs.getString("id"); }
             rs.close();
             if (temp_id == null) return null;
             if (!JavaTools.isLong(temp_id)) return null;
-            return PlayerRank.get(Long.valueOf(temp_id));
+            return Rank.get(Long.valueOf(temp_id));
         } catch (Exception e) { e.printStackTrace(); }
-        return PlayerRank.getDefaultRank();
+        return Rank.getDefaultRank();
     }
 
 
@@ -86,7 +86,7 @@ public class PlayerRank extends Database {
         return null;
     }
 
-    public PlayerRank setDisplayName(String name) {
+    public Rank setDisplayName(String name) {
         try {
             database.executeUpdate("UPDATE " + ranksDataTable + " SET displayName = '" + name + "' WHERE id = '" + id + "';");
         } catch (Exception e) { e.printStackTrace(); }
@@ -112,7 +112,7 @@ public class PlayerRank extends Database {
         } catch (Exception e) { e.printStackTrace(); }
         return 99999;
     }
-    public PlayerRank setPosition(int pos) {
+    public Rank setPosition(int pos) {
         try {
             database.executeUpdate("UPDATE " + ranksDataTable + " SET position = '" + pos + "' WHERE id = '" + id + "';");
         } catch (Exception e) { e.printStackTrace(); }
@@ -134,42 +134,42 @@ public class PlayerRank extends Database {
         return null;
     }
 
-    public PlayerRank setColor(String color) {
+    public Rank setColor(String color) {
         try {
             database.executeUpdate("UPDATE " + ranksDataTable + " SET color = '" + color + "' WHERE id = '" + id + "';");
         } catch (Exception e) { e.printStackTrace(); }
         return this;
     }
 
-    public PlayerRank setGroup(PermissionGroup group) {
+    public Rank setGroup(Group group) {
         try {
             database.executeUpdate("UPDATE " + ranksDataTable + " SET `group` = '" + group.id() + "' WHERE id = '" + id + "';");
         } catch (Exception e) { e.printStackTrace(); }
         return this;
     }
-    public PermissionGroup group() {
+    public Group group() {
         if (!isRankExistent(id)) return null;
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksDataTable + " WHERE id = '" + id + "';");
             String s = null; if (rs.next()) { s = rs.getString("group"); }
             rs.close();
-            if (s == null) { return PermissionGroup.getDefaultGroup(); }
-            if (!PermissionGroup.groupIds().contains(Long.valueOf(s))) { setGroup(PermissionGroup.getDefaultGroup()); return PermissionGroup.getDefaultGroup(); }
-            return PermissionGroup.get(Long.valueOf(s));
+            if (s == null) { return Group.getDefaultGroup(); }
+            if (!Group.groupIds().contains(Long.valueOf(s))) { setGroup(Group.getDefaultGroup()); return Group.getDefaultGroup(); }
+            return Group.get(Long.valueOf(s));
         } catch (Exception e) { e.printStackTrace(); }
         return null;
     }
 
 
-    public static List<PlayerRank> ranks() {
-        List<PlayerRank> re = new ArrayList<>();
+    public static List<Rank> ranks() {
+        List<Rank> re = new ArrayList<>();
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksDataTable + ";");
             while (rs.next()) {
                 String tmp_id = rs.getString("id");
                 if (tmp_id == null) continue;
                 if (!JavaTools.isLong(tmp_id)) continue;
-                re.add(PlayerRank.get(Long.valueOf(tmp_id)));
+                re.add(Rank.get(Long.valueOf(tmp_id)));
             }
             rs.close();
         } catch (Exception e) { e.printStackTrace(); }
@@ -207,14 +207,14 @@ public class PlayerRank extends Database {
         return List.of("4", "c", "6", "e", "2", "a", "b", "3", "1", "9", "d", "5", "f", "7", "8", "9");
     }
 
-    public static PlayerRank getDefaultRank() {
+    public static Rank getDefaultRank() {
         if (!isRankExistent(DefaultConfiguration.defaultRank.get())) {
-            PlayerRank rank = newRank(DefaultConfiguration.defaultRank.get(), "f").setPosition(rankNames().size() + 2);
+            Rank rank = newRank(DefaultConfiguration.defaultRank.get(), "f").setPosition(rankNames().size() + 2);
             resortRanks();
             return rank;
         } else {
-            if (PlayerRank.get(DefaultConfiguration.defaultRank.get()).position() == 10000) { PlayerRank.get(DefaultConfiguration.defaultRank.get()).setPosition(rankNames().size() + 2); resortRanks(); }
-            return PlayerRank.get(DefaultConfiguration.defaultRank.get());
+            if (Rank.get(DefaultConfiguration.defaultRank.get()).position() == 10000) { Rank.get(DefaultConfiguration.defaultRank.get()).setPosition(rankNames().size() + 2); resortRanks(); }
+            return Rank.get(DefaultConfiguration.defaultRank.get());
         }
     }
 
@@ -242,10 +242,10 @@ public class PlayerRank extends Database {
 
 
     public static void resortRanks() {
-        List<PlayerRank> ranks = new ArrayList<>(PlayerRank.ranks());
-        ranks.sort(Comparator.comparing(PlayerRank::position));
+        List<Rank> ranks = new ArrayList<>(Rank.ranks());
+        ranks.sort(Comparator.comparing(Rank::position));
         for (int i = 0; i < ranks.size(); i++) {
-            PlayerRank r = ranks.get(i);
+            Rank r = ranks.get(i);
             r.setPosition(i);
         }
     }

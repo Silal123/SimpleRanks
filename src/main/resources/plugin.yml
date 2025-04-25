@@ -1,6 +1,6 @@
 name: SimpleRanks
 version: '${project.version}'
-main: simpleranks.Simpleranks
+main: simpleranks.SimpleRanks
 api-version: '1.17'
 website: https://hangar.papermc.io/Silal/SimpleRanks
 description: Simply create ranks and manage players

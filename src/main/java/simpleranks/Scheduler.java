@@ -3,7 +3,7 @@ package simpleranks;
 import org.bukkit.Bukkit;
 import simpleranks.system.ScoreboardSystem;
 import simpleranks.utils.PermissionsManager;
-import simpleranks.utils.PlayerRank;
+import simpleranks.utils.Rank;
 import simpleranks.utils.config.DefaultConfiguration;
 import simpleranks.utils.config.PlayerConfiguration;
 
@@ -39,44 +39,44 @@ public final class Scheduler {
     private static int start1MinuteScheduler;
 
     private static void start1TickScheduler() {
-        start1TickScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
+        start1TickScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
             DefaultConfiguration.init();
             //
         }, 0, ONE_TICK);
     }
 
     private static void start1SecondScheduler() {
-        start1SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
+        start1SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
             //
         }, 0, ONE_SECOND);
     }
 
     private static void start10SecondScheduler() {
-        start10SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
+        start10SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
             //
         }, 0, 10 * ONE_SECOND);
     }
     public static void start30SecondScheduler() {
-        start30SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
-            PlayerRank.resortRanks();
+        start30SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
+            Rank.resortRanks();
             ScoreboardSystem.reloadAll();
         }, 0, 30 * ONE_SECOND);
     }
     private static void start45SecondScheduler() {
-        start45SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
+        start45SecondScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
             //
         }, 0, 45 * ONE_SECOND);
     }
 
     private static void start1MinuteScheduler() {
-        start1MinuteScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
+        start1MinuteScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
             PermissionsManager.reload();
             if (DefaultConfiguration.rankTimerEnabled.get()) {
                 for (PlayerConfiguration conf : PlayerConfiguration.playersInDatabase()) {
                     if (conf.getRankTimer() == -1) continue;
                     int newTimer = conf.getRankTimer() - 1;
                     if (newTimer < 1) {
-                        conf.setRank(PlayerRank.getDefaultRank());
+                        conf.setRank(Rank.getDefaultRank());
                         conf.setRankTimer(-1);
                         continue;
                     }
@@ -87,7 +87,7 @@ public final class Scheduler {
         }, 0, ONE_MINUTE);
     }
     private static void start10MinuteScheduler() {
-        start1MinuteScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Simpleranks.instance, () -> {
+        start1MinuteScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SimpleRanks.getInstance(), () -> {
             //
         }, 0, ONE_MINUTE * 10);
     }

@@ -4,7 +4,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import simpleranks.Simpleranks;
+import simpleranks.SimpleRanks;
 import simpleranks.system.ScoreboardSystem;
 import simpleranks.utils.PermissionsManager;
 import simpleranks.utils.config.DefaultConfiguration;
@@ -22,7 +22,7 @@ public class PlayerLeaveListener implements Listener {
                     .replace("%rank_dpname%", config.getRank().displayName())
                     .replace("%player_name%", e.getPlayer().getName());
 
-            if (Simpleranks.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (SimpleRanks.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 format = PlaceholderAPI.setPlaceholders(e.getPlayer(), format);
             }
 

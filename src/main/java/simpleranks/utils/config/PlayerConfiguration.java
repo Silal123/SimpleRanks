@@ -3,10 +3,9 @@ package simpleranks.utils.config;
 import org.bukkit.entity.Player;
 import simpleranks.utils.Database;
 import simpleranks.utils.JavaTools;
-import simpleranks.utils.PlayerRank;
+import simpleranks.utils.Rank;
 
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +37,7 @@ public class PlayerConfiguration extends Database {
         return false;
     }
 
-    public void setRank(PlayerRank rank) {
+    public void setRank(Rank rank) {
         try {
             if (hasPlayer()) {
                 database.executeUpdate("UPDATE " + playerDataTable + " SET rank = '" + rank.id() + "' WHERE uuid = '" + playerUUID + "';");
@@ -48,19 +47,19 @@ public class PlayerConfiguration extends Database {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public PlayerRank getRank() {
-        if (!hasPlayer()) return PlayerRank.getDefaultRank();
+    public Rank getRank() {
+        if (!hasPlayer()) return Rank.getDefaultRank();
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + playerDataTable + " WHERE uuid = '" + playerUUID + "';");
             String temp_id = null; if (rs.next()) { temp_id = rs.getString("rank"); }
             rs.close();
-            if (temp_id == null) return PlayerRank.getDefaultRank();
-            if (!JavaTools.isLong(temp_id)) return PlayerRank.getDefaultRank();
+            if (temp_id == null) return Rank.getDefaultRank();
+            if (!JavaTools.isLong(temp_id)) return Rank.getDefaultRank();
             long id = Long.valueOf(temp_id);
-            if (!PlayerRank.isRankExistent(id)) return PlayerRank.getDefaultRank();
-            return PlayerRank.get(id);
+            if (!Rank.isRankExistent(id)) return Rank.getDefaultRank();
+            return Rank.get(id);
         } catch (Exception e) { e.printStackTrace(); }
-        return PlayerRank.getDefaultRank();
+        return Rank.getDefaultRank();
     }
 
     public void setRankTimer(int timer) {
@@ -68,7 +67,7 @@ public class PlayerConfiguration extends Database {
             if (hasPlayer()) {
                 database.executeUpdate("UPDATE " + playerDataTable + " SET timer = '" + timer + "' WHERE uuid = '" + playerUUID + "';");
             } else {
-                database.executeUpdate("INSERT INTO " + playerDataTable + " (`uuid`, `rank`, `timer`) VALUES ('" + playerUUID + "', '" + PlayerRank.getDefaultRank().id() + "', '" + timer + "')");
+                database.executeUpdate("INSERT INTO " + playerDataTable + " (`uuid`, `rank`, `timer`) VALUES ('" + playerUUID + "', '" + Rank.getDefaultRank().id() + "', '" + timer + "')");
             }
         } catch (Exception e) { e.printStackTrace(); }
     }

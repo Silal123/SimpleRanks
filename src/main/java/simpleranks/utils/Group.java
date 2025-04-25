@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PermissionGroup extends Database {
+public class Group extends Database {
 
     public static int NAME_CHAR_LIMIT = 50;
 
     private long id;
 
-    public PermissionGroup(long id) {
+    public Group(long id) {
         this.id = id;
     }
 
@@ -27,7 +27,7 @@ public class PermissionGroup extends Database {
         return new Gson().fromJson(json, new TypeToken<List<String>>() {}.getType());
     }
 
-    public static PermissionGroup newGroup(String name, List<String> permissions) {
+    public static Group newGroup(String name, List<String> permissions) {
         long id = new Random().nextLong(); id = Math.abs(id) % 10000000000000000L;
         while (isGroupExistent(id)) { id = new Random().nextLong(); id = Math.abs(id) % 10000000000000000L; }
 
@@ -36,7 +36,7 @@ public class PermissionGroup extends Database {
         try {
             database.executeUpdate("INSERT INTO " + ranksPermissionGroupTable + " (`id`, `name`, `permissions`) VALUES ('" + id + "', '" + name + "', '" + convertPermissionListToJson(permissions) + "')");
         } catch (Exception e) { e.printStackTrace(); }
-        return PermissionGroup.get(id);
+        return Group.get(id);
     }
 
     public static void deleteGroup(long id) {
@@ -46,17 +46,17 @@ public class PermissionGroup extends Database {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public static PermissionGroup get(long id) {
-        return new PermissionGroup(id);
+    public static Group get(long id) {
+        return new Group(id);
     }
-    public static PermissionGroup get(String name) {
+    public static Group get(String name) {
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksPermissionGroupTable + " WHERE name = '" + name + "';");
             String temp_id = null; if (rs.next()) { temp_id = rs.getString("id"); }
             rs.close();
             if (temp_id == null) return null;
             if (!JavaTools.isLong(temp_id)) return null; //TODO Fix nulls
-            return PermissionGroup.get(Long.valueOf(temp_id));
+            return Group.get(Long.valueOf(temp_id));
         } catch (Exception e) { e.printStackTrace(); }
         return null;
     }
@@ -98,8 +98,8 @@ public class PermissionGroup extends Database {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public List<PlayerRank> getRanks() {
-        return PlayerRank.ranks().stream().filter(rank -> rank.group().id() == this.id).toList();
+    public List<Rank> getRanks() {
+        return Rank.ranks().stream().filter(rank -> rank.group().id() == this.id).toList();
     }
 
     public static boolean isGroupExistent(long id) {
@@ -123,15 +123,15 @@ public class PermissionGroup extends Database {
     }
 
 
-    public static List<PermissionGroup> groups() {
-        List<PermissionGroup> re = new ArrayList<>();
+    public static List<Group> groups() {
+        List<Group> re = new ArrayList<>();
         try {
             ResultSet rs = database.executeQuery("SELECT * FROM " + ranksPermissionGroupTable + ";");
             while (rs.next()) {
                 String tmp_id = rs.getString("id");
                 if (tmp_id == null) continue;
                 if (!JavaTools.isLong(tmp_id)) continue;
-                re.add(PermissionGroup.get(Long.valueOf(tmp_id)));
+                re.add(Group.get(Long.valueOf(tmp_id)));
             }
             rs.close();
         } catch (Exception e) { e.printStackTrace(); }
@@ -165,11 +165,11 @@ public class PermissionGroup extends Database {
         return re;
     }
 
-    public static PermissionGroup getDefaultGroup() {
+    public static Group getDefaultGroup() {
         if (!groupNames().contains(DefaultConfiguration.defaultPermissionGroup.get())) {
             return newGroup(DefaultConfiguration.defaultPermissionGroup.get(), new ArrayList<>());
         } else {
-            return PermissionGroup.get(DefaultConfiguration.defaultPermissionGroup.get());
+            return Group.get(DefaultConfiguration.defaultPermissionGroup.get());
         }
     }
 
